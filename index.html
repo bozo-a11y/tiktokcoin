@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Recharge</title>
+  <style>
+    body {
+      background: #fafafa;
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      color: #222;
+    }
+    .header {
+      background: #fff;
+      padding: 16px 0 8px 0;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2em;
+      box-shadow: 0 1px 4px #0001;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .safe-pay {
+      color: #00c292;
+      background: #eafaf6;
+      font-size: 0.95em;
+      padding: 4px 0;
+      text-align: center;
+      font-weight: 500;
+    }
+    .profile-box {
+      background: #fff;
+      border-radius: 12px;
+      margin: 16px 12px 0 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #e3e3e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      color: #fff;
+      font-weight: 700;
+      overflow: hidden;
+    }
+    .profile-info { flex: 1; }
+    .profile-info .name { font-weight: 700; font-size: 1.08em; }
+    .profile-info .desc { color: #888; font-size: 0.95em; margin-top: 2px; }
+    .profile-info .code { color: #ffb800; font-size: 1em; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+    .profile-info .code img { width: 18px; height: 18px; vertical-align: middle; }
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      margin: 16px 12px 0 12px;
+      padding: 1px 12px 12px 12px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .section-title { font-weight: 700; font-size: 1.08em; margin-bottom: 2px; }
+    .section-desc { color: #ff0050; font-size: 0.98em; margin-bottom: 12px; }
+    .coin-packs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .coin-pack {
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 14px 0 8px 0;
+      text-align: center;
+      cursor: pointer;
+      transition: border 0.2s, box-shadow 0.2s;
+      position: relative;
+      font-size: 1em;
+      min-width: 0;
+    }
+    .coin-pack.selected, .coin-pack:hover { border: 2px solid #ff0050; box-shadow: 0 0 8px #ff005044; }
+    .coin-icon { width: 24px; height: 24px; margin-bottom: 4px; vertical-align: middle; }
+    .coin-amount { font-weight: 700; font-size: 1.1em; margin-bottom: 2px; }
+    .coin-price { color: #888; font-size: 0.98em; }
+    .custom-pack {
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 8px 0 8px 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 1em;
+      cursor: pointer;
+      transition: border 0.2s, box-shadow 0.2s;
+      min-width: 0;
+    }
+    .custom-pack.selected, .custom-pack:hover { border: 2px solid #ff0050; box-shadow: 0 0 8px #ff005044; }
+    .custom-input { width: 60px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 4px; text-align: center; font-size: 1em; }
+    .total-row { margin: 12px 0 8px 0; font-size: 1.08em; color: #222; font-weight: 500; text-align: right; }
+    .invite-row, .add-row {
+      background: #fffbe6; border-radius: 10px; padding: 12px 14px; margin: 12px 0 0 0; display: flex; align-items: center; gap: 10px; font-size: 1em; color: #222; font-weight: 500; cursor: pointer;
+    }
+    .invite-row img, .add-row img { width: 28px; height: 28px; margin-right: 8px; }
+    .invite-row span, .add-row span { color: #888; font-size: 0.95em; margin-left: 4px; }
+    .pay-bar { position: fixed; left: 0; bottom: 0; width: 100vw; background: #fff; box-shadow: 0 -2px 8px #0001; padding: 10px 0 10px 0; text-align: center; z-index: 20; }
+    .pay-btn { background: #ff0050; color: #fff; border: none; border-radius: 24px; padding: 14px 32px; font-size: 1.1em; font-weight: 700; cursor: pointer; margin-top: 8px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .pay-btn:hover { background: #e60045; }
+    .pay-btn .shield { width: 22px; height: 22px; vertical-align: middle; }
+    .pay-bar .offer { color: #ff0050; font-size: 0.98em; margin-bottom: 4px; font-weight: 500; }
+    .pay-bar .cards { margin: 6px 0 0 0; display: flex; justify-content: center; gap: 8px; }
+    .pay-bar .cards img { height: 18px; width: auto; }
+    @media (max-width: 600px) {
+      .profile-box, .section { margin: 12px 4px 0 4px; }
+      .coin-packs { grid-template-columns: 1fr 1fr; }
+      .pay-btn { padding: 12px 8vw; font-size: 1em; }
+    }
+
+    :root {
+      --ink: #17171b;
+      --muted: #8b8b92;
+      --line: #ececef;
+      --soft: #f7f7f8;
+      --pink: #fe2c55;
+    }
+
+    * { box-sizing: border-box; }
+    button, .coin-pack, .custom-entry {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: #f5f5f6;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100dvh;
+      padding-bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+    .header {
+      background: #fff;
+      box-shadow: none;
+      border-bottom: 1px solid var(--line);
+      height: 58px;
+      padding: 18px 20px 0;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+    .header::before {
+      content: "‹";
+      float: left;
+      font-size: 30px;
+      line-height: 17px;
+      font-weight: 300;
+      margin-right: 12px;
+    }
+    .safe-pay { display: none; }
+    .profile-box {
+      margin: 0;
+      padding: 18px 20px 14px;
+      border-radius: 0;
+      box-shadow: none;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .profile-box:first-of-type { min-height: 76px; }
+    .profile-avatar { width: 42px; height: 42px; }
+    .profile-info .name { font-size: 16px; }
+    .profile-info .desc { font-size: 12px; color: var(--muted); }
+    .profile-info .code { font-size: 13px; color: var(--muted); }
+    .section {
+      margin: 12px 0 0;
+      padding: 20px;
+      border-radius: 0;
+      box-shadow: none;
+      border-top: 1px solid var(--line);
+    }
+    .section-title { font-size: 16px; margin-bottom: 12px; }
+    .section-desc { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    #username {
+      width: 100% !important;
+      height: 48px;
+      border: 1px solid var(--line) !important;
+      border-radius: 8px !important;
+      background: var(--soft);
+      padding: 12px 14px !important;
+      font-size: 16px !important;
+    }
+    #profileBox { background: #fff !important; border: 1px solid var(--line) !important; }
+    #profileBox .profile-info .name { font-size: 15px !important; }
+    #profileBox {
+      min-height: 66px;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(20, 20, 30, 0.06);
+    }
+    #profileBox .profile-avatar { border: 1px solid #e4e4e8; }
+    #profileBox .profile-avatar,
+    #profileBox .profile-avatar img,
+    #profileBox #profileAvatarImg {
+      width: 64px !important;
+      height: 64px !important;
+      overflow: hidden;
+      object-fit: cover;
+      object-position: 50% 50%;
+    }
+    #profileBox {
+      min-height: 82px;
+      padding: 14px !important;
+      background: #fff !important;
+      border-color: var(--line) !important;
+      box-shadow: 0 2px 8px rgba(20, 20, 30, 0.06);
+    }
+    #profileBox .profile-info .name,
+    #profileBox .profile-handle,
+    #profileBox .profile-followers,
+    #profileBox .profile-following {
+      color: var(--ink) !important;
+    }
+    #profileBox .profile-info .name {
+      font-size: 17px !important;
+      margin-bottom: 3px !important;
+    }
+    #profileBox .profile-handle,
+    #profileBox .profile-followers {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    #profileBox .profile-info { min-width: 0; }
+    #profileBox .profile-info .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .profile-handle {
+      color: #777;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .profile-followers {
+      color: #55555b;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .coin-packs {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .coin-pack, .custom-pack {
+      min-height: 76px;
+      padding: 10px 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .coin-pack.selected, .coin-pack:hover, .custom-pack.selected, .custom-pack:hover {
+      border-color: var(--pink);
+      box-shadow: 0 3px 12px #fe2c5524;
+    }
+    .coin-pack img, .custom-pack img { width: 20px !important; height: 20px !important; }
+    .coin-amount { font-size: 14px !important; }
+    .coin-price { font-size: 12px !important; padding-left: 0 !important; }
+    .payment-methods-image { padding-left: 0 !important; }
+    .total-row { font-size: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+    .pay-bar {
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom)) !important;
+      background: #fff;
+    }
+    .pay-btn, #bottomRechargeBtn { background: var(--pink) !important; border-radius: 8px !important; height: 48px; margin: 0 !important; width: 100% !important; font-size: 15px !important; }
+    #bottomRechargeBtn { background: var(--pink) !important; }
+    .custom-recharge-modal .modal-content, .order-summary-modal .modal-content { border-radius: 14px !important; }
+    .custom-recharge-modal {
+      align-items: flex-end !important;
+      justify-content: center !important;
+      background: rgba(0, 0, 0, 0.35) !important;
+    }
+    .custom-recharge-modal .modal-content {
+      width: 100% !important;
+      max-width: 393px !important;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 18px 18px 0 0 !important;
+      padding: 20px 16px 24px !important;
+      animation: customSheetIn 220ms ease-out;
+    }
+    @keyframes customSheetIn {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .custom-recharge-modal .modal-content,
+    .custom-recharge-modal .modal-content * {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    .custom-recharge-modal .modal-header {
+      height: 28px;
+      margin-bottom: 20px !important;
+    }
+    .custom-recharge-modal .modal-title {
+      color: #17171b;
+      font-size: 17px !important;
+      font-weight: 600 !important;
+      line-height: 28px;
+    }
+    .custom-recharge-modal .back-arrow,
+    .custom-recharge-modal .help-icon {
+      color: #55555b;
+      font-size: 22px !important;
+      font-weight: 400;
+      line-height: 24px;
+    }
+    .custom-recharge-modal .input-label {
+      color: #77777e !important;
+      font-size: 13px !important;
+      margin-bottom: 8px !important;
+    }
+    .custom-recharge-modal .custom-input-display {
+      height: 52px;
+      margin-bottom: 16px !important;
+      padding: 8px 14px !important;
+      border-color: #e5e5e8 !important;
+      border-radius: 8px !important;
+    }
+    .custom-recharge-modal .custom-input-display img {
+      width: 24px !important;
+      height: 24px !important;
+      margin-right: 8px !important;
+    }
+    .custom-recharge-modal #customModalAmount {
+      color: #17171b !important;
+      font-size: 20px !important;
+      font-weight: 600 !important;
+    }
+    .custom-recharge-modal .keypad {
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 8px !important;
+    }
+    .custom-recharge-modal .key {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 !important;
+      border: 1px solid #ededf0;
+      border-radius: 8px !important;
+      background: #f7f7f8 !important;
+      color: #25252a;
+      font-size: 17px !important;
+      font-weight: 600 !important;
+      user-select: none;
+    }
+    .custom-recharge-modal .key:active {
+      background: #ececef !important;
+      transform: scale(0.97);
+    }
+    .custom-recharge-modal .modal-footer {
+      margin-top: 16px !important;
+    }
+    .custom-recharge-modal .modal-footer > div {
+      height: 22px;
+      margin-bottom: 14px !important;
+      color: #333339;
+      font-size: 14px;
+    }
+    .custom-recharge-modal #modalTotalPrice {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+    }
+    .custom-recharge-modal #modalPayBtn {
+      height: 48px;
+      padding: 0 !important;
+      border-radius: 8px !important;
+      background: var(--pink) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+    }
+    @media (max-width: 600px) {
+      .profile-box, .section { margin-left: 0; margin-right: 0; }
+      .coin-packs { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .balance-panel {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 20px 20px;
+    }
+    .reward-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .reward-stat {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px 10px;
+    }
+    .reward-stat:last-child {
+      background: var(--soft);
+    }
+    .reward-stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .reward-stat-value {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .balance-label {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .balance-value {
+      color: #17171b;
+      font-size: clamp(27px, 8vw, 38px);
+      font-weight: 750;
+      letter-spacing: 0;
+      line-height: 1.15;
+      text-align: center;
+    }
+    .balance-conversion {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      margin: 6px 0 15px;
+    }
+    .conversion-coin-icon {
+      width: 12px;
+      height: 12px;
+      margin: 0 3px;
+      vertical-align: -2px;
+      object-fit: contain;
+    }
+    .balance-panel .exchange-action {
+      display: block;
+      width: 100%;
+      height: 46px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--pink);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .withdraw-action {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 15px 0 10px;
+      cursor: pointer;
+    }
+    .withdraw-limit {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+    .balance-panel {
+      padding: 10px 16px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .reward-stats, .balance-panel .withdraw-action, .balance-panel .withdraw-limit {
+      display: none;
+    }
+    .balance-label { margin-bottom: 2px; }
+    .balance-value { font-size: clamp(28px, 8vw, 36px); }
+    .balance-conversion { margin: 4px 0 10px; }
+    .balance-panel .exchange-action { height: 42px; }
+    .section { margin-top: 0 !important; padding: 14px 16px; }
+    .section + .section { padding-top: 12px; }
+    .coin-packs { margin-top: 12px; }
+    .coin-packs .coin-pack:nth-child(n + 4), .coin-packs .custom-pack { display: none; }
+    #coinForm {
+      display: flex;
+      flex-direction: column;
+    }
+    .custom-entry {
+      order: -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      border: 1px solid #ff9ab0;
+      border-radius: 12px;
+      background: #fff1f4;
+      box-shadow: 0 2px 8px rgba(254, 44, 85, 0.12);
+      color: var(--pink);
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      padding: 14px;
+      cursor: pointer;
+    }
+    .custom-entry img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .custom-entry span:first-of-type { flex: 1; }
+    .custom-entry .custom-arrow {
+      color: var(--pink);
+      font-size: 26px;
+      font-weight: 400;
+      line-height: 1;
+    }
+    .payment-methods-image, .total-row { display: none !important; }
+    body {
+      width: 100%;
+      max-width: 393px;
+      min-height: 852px;
+      margin: 0 auto;
+      background: #f5f5f6;
+    }
+    .balance-value {
+      transition: color 300ms ease, transform 300ms ease;
+    }
+    .balance-value.is-decreasing {
+      color: #ff174f;
+      text-shadow: 0 6px 18px rgba(254, 44, 85, 0.35);
+      transition: color 180ms ease, text-shadow 180ms ease;
+    }
+    @media (min-width: 394px) {
+      .pay-bar {
+        width: 393px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+    .success-dialog {
+      background: #fff;
+      width: min(100%, 393px);
+      min-height: 100dvh;
+      height: 100dvh;
+      padding: clamp(84px, 18vh, 140px) 16px calc(24px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .success-check {
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: #36d267;
+      color: #fff;
+      font-size: 34px;
+      font-weight: 400;
+    }
+    .success-dialog h3 {
+      margin: 0 0 8px;
+      color: #222;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .success-message {
+      margin: 0 0 24px;
+      color: #777;
+      font-size: 15px;
+      text-align: center;
+    }
+    .success-message .success-coin {
+      width: 13px;
+      height: 13px;
+      margin: 0 3px;
+      vertical-align: -2px;
+      object-fit: contain;
+    }
+    .success-detail {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid #e7e7e7;
+      padding: 16px 0;
+      color: #777;
+      font-size: 16px;
+    }
+    .success-detail strong {
+      color: #333;
+      font-weight: 500;
+      text-align: right;
+    }
+    .gifter-level {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid #e7e7e7;
+      margin-top: 8px;
+      padding: 18px 0;
+      text-align: left;
+    }
+    .gifter-level img {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .gifter-level-title { color: #333; font-size: 17px; margin-bottom: 4px; }
+    .gifter-level-copy { color: #777; font-size: 14px; line-height: 1.35; }
+    .success-back {
+      width: 100%;
+      height: 48px;
+      margin-top: auto;
+      border: 0;
+      border-radius: 24px;
+      background: #31d400;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #loadingScreen,
+    #loadingScreen .loading-content {
+      pointer-events: none;
+    }
+    #loadingScreen {
+      background: rgba(255, 255, 255, 0.08) !important;
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
+    }
+    #loadingScreen .loading-content {
+      width: 58px !important;
+      padding: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .loading-spinner {
+      width: 52px;
+      height: 52px;
+      border: 5px solid rgba(254, 44, 85, 0.22);
+      border-top-color: var(--pink);
+      border-radius: 50%;
+      animation: loadingSpin 0.75s linear infinite;
+    }
+    @keyframes loadingSpin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-height: 700px) {
+      .success-dialog {
+        padding-top: 56px;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      }
+      .success-check { width: 50px; height: 50px; margin-bottom: 12px; font-size: 29px; }
+      .success-dialog h3 { font-size: 23px; }
+      .success-message { margin-bottom: 14px; font-size: 14px; }
+      .success-detail { padding: 10px 0; font-size: 14px; }
+      .gifter-level { margin-top: 4px; padding: 12px 0; }
+      .gifter-level-title { font-size: 15px; }
+      .gifter-level-copy { font-size: 12px; }
+      .success-back { height: 46px; font-size: 16px; }
+    }
+    .rewards-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--line);
+      padding: 4px 0 13px;
+      margin-bottom: 14px;
+    }
+    .rewards-notice.payment-notification {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      z-index: 2000;
+      width: calc(100% - 24px);
+      max-width: 369px;
+      box-sizing: border-box;
+      border: 1px solid #e7e7eb;
+      min-height: 68px;
+      border-radius: 17px;
+      background: #e7e7e9;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+      opacity: 0;
+      transform: translate(-50%, -140%);
+      visibility: hidden;
+      max-height: 120px;
+      overflow: visible;
+      margin-bottom: 0;
+      padding: 10px 16px;
+      transition: opacity 260ms ease, transform 260ms ease, visibility 260ms ease;
+    }
+    .rewards-notice.payment-notification.is-visible {
+      animation: paymentNotificationIn 650ms cubic-bezier(.2, .8, .2, 1) forwards;
+    }
+    .rewards-notice.payment-notification.is-dismissing {
+      animation: paymentNotificationOut 360ms cubic-bezier(.4, 0, 1, 1) forwards !important;
+    }
+    .payment-notification .rewards-notice-icon {
+      width: 38px;
+      height: 38px;
+    }
+    .payment-notification .rewards-notice-title {
+      font-size: 13px;
+      color: #3f3f44;
+    }
+    .payment-notification .rewards-notice-subtitle {
+      font-size: 11px;
+      color: #707077;
+    }
+    .payment-notification .rewards-notice-time {
+      font-size: 11px;
+      color: #77777d;
+    }
+    .balance-panel.notification-space {
+      padding-top: 42px;
+      transition: padding-top 420ms ease;
+    }
+    @keyframes paymentNotificationIn {
+      0% { opacity: 0; visibility: hidden; transform: translate(-50%, -140%); }
+      65% { opacity: 1; visibility: visible; transform: translate(-50%, 8px); }
+      100% { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+    }
+    @keyframes paymentNotificationOut {
+      0% { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
+      100% { opacity: 0; visibility: hidden; transform: translate(-50%, -145%) scale(.96); }
+    }
+    .rewards-notice-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .rewards-notice-copy { flex: 1; min-width: 0; }
+    .rewards-notice-title { color: #55555b; font-size: 11px; font-weight: 600; }
+    .rewards-notice-subtitle { color: #a1a1a7; font-size: 10px; margin-top: 2px; }
+    .rewards-notice-time { color: #aaa; font-size: 10px; }
+    .profile-followers { white-space: nowrap; }
+    .profile-following { color: #8b8b92; font-size: 12px; line-height: 1.4; }
+    .exchange-note {
+      color: #99999f;
+      font-size: 11px;
+      line-height: 1.45;
+      margin: 12px 0 0;
+    }
+    .balance-stats {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0 0 18px;
+    }
+    .balance-stats .reward-stat {
+      min-height: 62px;
+      padding: 10px 12px;
+      border: 1px solid #e4e4e8;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .balance-stats .reward-stat:last-child { background: #f1f1f3; }
+    .balance-stats .reward-stat-label {
+      color: #89898f;
+      font-size: 12px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .balance-stats .reward-stat-value {
+      color: #303035;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Exchange</div>
+
+  <section class="balance-panel" aria-label="Rewards balance">
+    <div class="rewards-notice payment-notification" id="rewardsNotice">
+      <img class="rewards-notice-icon" src="tiktok.jpg" alt="TikTok LIVE Rewards">
+      <div class="rewards-notice-copy">
+        <div class="rewards-notice-title">TikTok LIVE Rewards</div>
+        <div class="rewards-notice-subtitle" id="rewardsNoticeSubtitle">Successfully sent coins to recipient</div>
+      </div>
+      <span class="rewards-notice-time">Now</span>
+    </div>
+    <div class="reward-stats balance-stats">
+      <div class="reward-stat">
+        <div class="reward-stat-label">Available rewards</div>
+        <div class="reward-stat-value" id="availableRewardsValue">$9,572,882,245.12</div>
+      </div>
+      <div class="reward-stat">
+        <div class="reward-stat-label">Upcoming rewards</div>
+        <div class="reward-stat-value">$167,290.62</div>
+      </div>
+    </div>
+    <div class="balance-label">Available rewards</div>
+    <div class="balance-value">$9,572,882,245.12</div>
+    <div class="balance-conversion">= $9,572,882,245.12 &nbsp;·&nbsp; <img class="conversion-coin-icon" src="coin.png" alt="Coin"> 652,385,866 Coins</div>
+    <button class="exchange-action" type="button" id="balanceExchangeBtn">Exchange</button>
+    <button class="withdraw-action" type="button" id="withdrawBtn">Withdraw</button>
+    <div class="withdraw-limit">Daily withdrawal limit (Remain/Total): $1,000/$1,000</div>
+  </section>
+
+  <div class="section" style="margin-top: 16px;">
+    <div class="section-title" style="margin-bottom: 8px;">TikTok username</div>
+    <input type="text" id="username" placeholder="@username" style="width:calc(100% - 24px);padding:12px;border-radius:8px;border:1px solid #ddd;font-size:1em;margin: 0 0 12px 0;">
+    
+    <!-- Profil Kartı - Input'un Altında Kalıcı -->
+    <div class="profile-box" id="profileBox" style="margin: 0; padding: 12px; display: none; background: #f8f8f8; border-radius: 8px; border: 1px solid #eee;">
+      <div class="profile-avatar" id="profileAvatar" style="width: 40px; height: 40px; flex-shrink: 0;">
+        <img id="profileAvatarImg" src="tiktok.jpg" alt="TikTok Profile" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+      </div>
+      <div class="profile-info" style="display:flex; flex-direction:column; justify-content:center; flex: 1; margin-left: 12px;">
+        <div class="name" id="profileName" style="font-weight: 700; font-size: 0.95em; margin-bottom: 2px;">Profile</div>
+        <div class="profile-handle"><span id="profileHandle">@username</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <form id="coinForm">
+      <div class="coin-packs" id="coinPacks">
+        <div class="coin-pack" data-amount="250" data-price="3.03">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">250</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$3.03</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="500" data-price="6.07">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">500</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$6.07</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="15000" data-price="182.04">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">15,000</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$182.04</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="1400" data-price="14.8">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">1,400</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$14.8</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="3500" data-price="37">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">3,500</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$37</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="7000" data-price="74">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <span class="coin-amount" style="font-weight:700;font-size:1.3em;">7,000</span>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$74</span>
+          </div>
+        </div>
+        <div class="coin-pack" data-amount="17500" data-price="185">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              <div class="coin-amount" style="font-weight:700;font-size:1.3em;">17,500</div>
+            </div>
+            <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$185</span>
+          </div>
+        </div>
+        <div class="custom-pack" id="customPack">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+            <div class="coin-amount" style="font-weight:700;font-size:1.3em; display:flex; align-items:center; gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              Custom
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-entry" id="customEntry">
+        <img src="coin.png" alt="Coin">
+        <span>Custom amount</span>
+        <span class="custom-arrow">›</span>
+      </div>
+      <div class="payment-methods-image" style="text-align: left; margin-top: 12px; margin-bottom: 12px; padding-left: 20px;">
+        <img src="payment.png" alt="Payment Methods" style="height:32px; width:auto;">
+      </div>
+      <div class="total-row" style="display:flex; align-items:center; justify-content:flex-end; gap: 8px;">
+        <span style="font-weight: 700;">Total</span> <span id="totalPrice" style="font-weight: 700;">$0</span>
+      </div>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <div class="pay-bar" style="padding: 10px 0; text-align: center;">
+    <button class="pay-btn" id="bottomRechargeBtn" style="background: #ff0050; color: #fff; border: none; border-radius: 8px; padding: 14px 32px; font-size: 1.1em; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; width: calc(100% - 40px); margin: 0 20px;">
+      Recharge
+    </button>
+  </div>
+
+  <!-- Custom Recharge Modal -->
+  <div class="custom-recharge-modal" id="customRechargeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1002;">
+    <div class="modal-content" style="background:#fff; padding:20px; border-radius:12px; width:90%; max-width:400px; box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="display:flex; justify-content:center; align-items:center; margin-bottom:20px; position:relative;">
+        <div class="modal-title" style="font-weight:700; font-size:1.2em; text-align:center; flex-grow: 1;">Custom</div>
+        <span class="back-arrow" id="modalBack" style="font-size:1.5em; cursor:pointer; position:absolute; left:0;">&lt;</span>
+        <span class="help-icon" style="font-size:1.2em; cursor:pointer; position:absolute; right:0;">?</span>
+      </div>
+      <div class="modal-body">
+        <div class="input-label" style="font-size:0.9em; color:#888; margin-bottom:8px;">Number of Coins</div>
+        <div class="custom-input-display" style="display:flex; align-items:center; justify-content:flex-start; border:1px solid #eee; border-radius:8px; padding:10px; margin-bottom:20px; padding-left: 20px;">
+          <img src="coin.png" alt="Coin" style="width:32px;height:32px; margin-right:8px;">
+          <span id="customModalAmount" style="font-size:1.5em; font-weight:700; color:#333;">0</span>
+        </div>
+        <div class="keypad" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">1</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">2</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">3</div>
+          <div class="key delete-key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">&#x232B;</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">4</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">5</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">6</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">000</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">7</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">8</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">9</div>
+          <div class="key" style="background:#f0f0f0; padding:15px; border-radius:8px; text-align:center; font-size:1.2em; font-weight:600; cursor:pointer;">0</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <span style="font-weight:700;">Total</span>
+          <span id="modalTotalPrice" style="font-weight:700; color:#000;">$0</span>
+        </div>
+        <button class="pay-btn" id="modalPayBtn" style="width:100%; background:#fe2c55; color:#fff; border:none; border-radius:12px; padding:14px 0; font-size:1.1em; font-weight:700; cursor:pointer; display:flex; justify-content:center; align-items:center;">
+          Recharge
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Summary Modal -->
+  <div class="order-summary-modal" id="orderSummaryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:100;">
+    <div class="modal-content" style="background:#fff; padding:20px; border-radius:12px; width:90%; max-width:400px; box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="display:flex; justify-content:center; align-items:center; margin-bottom:20px; position:relative;">
+        <div class="modal-title" style="font-weight:700; font-size:1.2em; text-align:center; flex-grow: 1;">Order summary</div>
+        <span class="close-modal" id="closeOrderSummaryModal" style="font-size:1.5em; cursor:pointer; position:absolute; right:0;">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span>Account</span>
+          <span id="summaryAccount" style="font-weight:700;">@jakeobsidian</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span id="summaryCoins">9,900,000 Coins</span>
+          <span id="summaryCoinPrice" style="font-weight:700;">$ 104657.14</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; border-top:1px solid #eee; padding-top:10px;">
+          <span>Total</span>
+          <span id="summaryTotal" style="font-weight:700; color:#ff0050;">$ 104657.14</span>
+        </div>
+        <div style="margin-bottom:20px;">
+          <span style="font-weight:700;">VISA</span> <span id="summaryPaymentMethod">******6422</span>
+        </div>
+        <p style="font-size:0.8em; color:#888; line-height:1.4;">
+          By clicking "Pay now", you agree to our <a href="#" style="color:#ff0050; text-decoration:none;">Terms of Purchase for Coins</a>. By using any amount of Coins within 14 days after clicking "Pay Now", you acknowledge and confirm that you will no longer be eligible for a refund of this order.
+        </p>
+        <p style="font-size:0.8em; color:#888; line-height:1.4;">
+          To assess your tax rate in accordance with our <a href="#" style="color:#ff0050; text-decoration:none;">Privacy Policy</a>, TikTok detected that your location is New York, New York, New York, United States
+        </p>
+        <button class="pay-btn" id="payNowButton" style="width:100%; margin-top:20px; background:#ff0050; color:#fff; border:none; border-radius:12px; padding:14px 0; font-size:1.1em; font-weight:700; cursor:pointer; display:flex; justify-content:center; align-items:center;">
+          Pay now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yükleniyor Ekranı (gif.gif ile) -->
+  <div id="loadingScreen" style="display:none; position:fixed; inset:0; z-index:1001; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+    <div class="loading-content" role="status" aria-label="Loading">
+      <div class="loading-spinner"></div>
+      <div id="countdown" hidden>05:00</div>
+    </div>
+  </div>
+
+  <!-- Success Popup Modal -->
+  <div id="successPopup" style="display: none; position: fixed; inset: 0; background: #fff; justify-content: center; align-items: stretch; z-index: 1000;">
+    <div class="success-dialog">
+      <div class="success-check">&#10003;</div>
+      <h3>Exchange Completed!</h3>
+      <p id="successMessage" class="success-message">You exchanged for 🟡 0 Coins</p>
+      <div class="success-detail"><span>Recipient</span><strong id="successRecipient">@username</strong></div>
+      <div class="success-detail"><span>Coins Exchanged</span><strong id="successCoins">0 Coins</strong></div>
+      <div class="success-detail"><span>Deducted Amount</span><strong id="successAmount">$0.00</strong></div>
+      <div class="success-detail"><span>Date</span><strong id="successDate">05/09/2026</strong></div>
+      <div class="gifter-level">
+        <img src="tiktok.jpg" alt="TikTok">
+        <div>
+          <div class="gifter-level-title">Start gifter level</div>
+          <div class="gifter-level-copy">Send your first Gift to begin your gifter journey and unlock more rewards as you level up.</div>
+        </div>
+      </div>
+      <button id="successGoBackBtn" class="success-back">&#8592; Go back</button>
+    </div>
+  </div>
+
+  <script>
+    let queuedConnectMessage = null;
+    window.addEventListener('message', (event) => {
+      if (event.data?.type === 'connect' && event.data?.id) {
+        queuedConnectMessage = event.data;
+      }
+    });
+
+    let selectedAmount = 250;
+    let selectedPrice = 3.03;
+    let pricePerCoin = 0; // will be calculated
+    let currentCustomAmount = '';
+    let socket = null;
+    let availableGifts = [];
+    let profileRequestId = 0;
+    let profileDebounceTimer = null;
+    const profileCache = new Map();
+    const profileCacheDuration = 5 * 60 * 1000;
+    let notificationHideTimer = null;
+    let hostFollowerCount = 0;
+    let hostFollowingCount = 0;
+    let displayedBalance = 9572882245.12;
+
+    function animateBalanceDecrease(amount) {
+      const balanceValue = document.querySelector('.balance-value');
+      if (!balanceValue || !amount || amount <= 0) return;
+
+      const start = displayedBalance;
+      const end = Math.max(0, start - amount);
+      const startedAt = performance.now();
+      const duration = 1400;
+      balanceValue.classList.add('is-decreasing');
+
+      function renderBalance(now) {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start - ((start - end) * eased);
+        const formattedBalance = current.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        balanceValue.textContent = `$${formattedBalance}`;
+        const availableRewardsValue = document.getElementById('availableRewardsValue');
+        if (availableRewardsValue) {
+          availableRewardsValue.textContent = `$${formattedBalance}`;
+        }
+        const conversion = document.querySelector('.balance-conversion');
+        if (conversion) {
+          conversion.innerHTML = `= $${formattedBalance} &nbsp;·&nbsp; <img class="conversion-coin-icon" src="coin.png" alt="Coin"> 652,385,866 Coins`;
+        }
+        if (progress < 1) {
+          requestAnimationFrame(renderBalance);
+        } else {
+          displayedBalance = end;
+          balanceValue.classList.remove('is-decreasing');
+        }
+      }
+
+      requestAnimationFrame(renderBalance);
+    }
+
+    function showRewardsNotification() {
+      const notice = document.getElementById('rewardsNotice');
+      const subtitle = document.getElementById('rewardsNoticeSubtitle');
+      if (!notice) return;
+      clearTimeout(notificationHideTimer);
+      if (subtitle) {
+        subtitle.textContent = `Successfully exchanged ${Number(selectedAmount || 0).toLocaleString()} Coins`;
+      }
+      notice.classList.remove('is-visible');
+      void notice.offsetWidth;
+      notice.classList.add('is-visible');
+      notificationHideTimer = setTimeout(() => {
+        notice.classList.add('is-dismissing');
+        setTimeout(() => {
+          notice.classList.remove('is-visible', 'is-dismissing');
+        }, 360);
+      }, 3000);
+    }
+
+    function normalizeUsername(username) {
+      return String(username || '')
+        .trim()
+        .replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, '')
+        .replace(/^@/, '')
+        .split(/[/?#]/)[0]
+        .trim();
+    }
+
+    function extractAvatarUrl(value) {
+      if (!value) return '';
+      if (typeof value === 'string') {
+        const url = value.trim();
+        return url.startsWith('//') ? `https:${url}` : url;
+      }
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          const url = extractAvatarUrl(item);
+          if (url) return url;
+        }
+        return '';
+      }
+      if (typeof value === 'object') {
+        const candidates = [value.urlList, value.url_list, value.urls, value.url, value.src];
+        for (const candidate of candidates) {
+          const url = extractAvatarUrl(candidate);
+          if (url) return url;
+        }
+      }
+      return '';
+    }
+
+    function normalizeProfile(profile) {
+      if (!profile) return null;
+      const user = profile.user || profile;
+      const stats = profile.stats || profile.statsV2 || user.stats || {};
+      return {
+        ...profile,
+        username: profile.username || profile.uniqueId || user.uniqueId || user.unique_id || user.username || '',
+        nickname: profile.nickname || user.nickname || user.nickName || '',
+        avatar: extractAvatarUrl(
+          profile.avatar || profile.avatarLarger || profile.avatar_larger ||
+          user.avatar || user.avatarLarger || user.avatar_larger ||
+          user.avatarMedium || user.avatar_medium || user.avatarThumb || user.avatar_thumb
+        ),
+        followerCount: profile.followerCount || profile.follower_count || stats.followerCount || stats.follower_count || 0,
+        followingCount: profile.followingCount || profile.following_count || stats.followingCount || stats.following_count || 0
+      };
+    }
+
+    // TikTok profil bilgilerini backend üzerinden al
+    async function fetchTikTokProfile(username) {
+      const requestId = ++profileRequestId;
+      try {
+        const cleanUsername = normalizeUsername(username);
+        if (!cleanUsername) return;
+
+        console.log('🔍 Profil aranıyor:', cleanUsername);
+
+        const backendProfile = await fetchProfileFromBackend(cleanUsername);
+        if (requestId !== profileRequestId) return;
+
+        if (backendProfile) {
+          if (hostFollowerCount > 0 && !backendProfile.followerCount) {
+            backendProfile.followerCount = hostFollowerCount;
+          }
+          if (hostFollowingCount > 0 && !backendProfile.followingCount) {
+            backendProfile.followingCount = hostFollowingCount;
+          }
+          updateProfileDisplay({
+            ...backendProfile,
+            initials: getInitials(backendProfile.username || cleanUsername)
+          });
+          return;
+        }
+
+        // Backend TikTok tarafından engellenirse sadece avatar için oEmbed denenir.
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+          const embedUrl = `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${encodeURIComponent(cleanUsername)}`;
+          console.log('📡 API çağrısı:', embedUrl);
+          
+          const response = await fetch(embedUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('✅ oEmbed başarılı:', data);
+            
+            let avatarUrl = '';
+            // Thumbnail'den avatar URL'sini çıkar veya custom avatar oluştur
+            if (data.thumbnail_url) {
+              avatarUrl = data.thumbnail_url;
+              console.log('✅ Avatar URL bulundu:', avatarUrl);
+            } else {
+              // Fallback: İsim bazlı avatar
+              avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanUsername)}&background=random&color=fff`;
+            }
+
+            if (requestId !== profileRequestId) return;
+            updateProfileDisplay({
+              username: cleanUsername,
+              avatar: avatarUrl,
+              followerCount: 0
+            });
+            return;
+          }
+        } catch (err) {
+          console.log('❌ oEmbed hatası:', err.message);
+        }
+
+        // Fallback: UI Avatars servisi ile custom avatar oluştur
+        console.log('📊 Custom avatar oluşturuluyor...');
+        const customAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanUsername)}&background=random&color=fff&size=128`;
+        
+        if (requestId !== profileRequestId) return;
+        updateProfileDisplay({
+          username: cleanUsername,
+          avatar: customAvatarUrl,
+          followerCount: 0
+        });
+
+      } catch (error) {
+        console.error('❌ Profil hatası:', error);
+      }
+    }
+
+    // Kendi Backend'e istek at
+    async function fetchProfileFromBackend(username) {
+      const cachedProfile = profileCache.get(username);
+      if (cachedProfile && Date.now() - cachedProfile.savedAt < profileCacheDuration) {
+        return cachedProfile.data;
+      }
+      try {
+        console.log('🔌 Backend API\'ye istek gönderiliyor:', username);
+
+        const backendBaseUrl = location.protocol === 'file:' ? 'http://localhost:3001' : '';
+        const apiUrl = `${backendBaseUrl}/api/profile?username=${encodeURIComponent(username)}`;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+        const response = await fetch(apiUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Backend başarılı:', data);
+          if (data?.user) {
+            const profile = {
+              username,
+              nickname: data.user.nickname || data.user.uniqueId || username,
+              avatar: data.user.avatarLarger ? `${backendBaseUrl}/api/avatar?url=${encodeURIComponent(data.user.avatarLarger)}` : '',
+              followerCount: data.user.followerCount || 0,
+              followingCount: data.user.followingCount || 0,
+              heartCount: data.user.heartCount || 0,
+              videoCount: data.user.videoCount || 0
+            };
+            profileCache.set(username, { data: profile, savedAt: Date.now() });
+            return profile;
+          }
+        } else {
+          console.log('⚠️ Backend HTTP hatası:', response.status);
+        }
+      } catch (e) {
+        console.log('❌ Backend başarısız:', e.message);
+      }
+      return null;
+    }
+
+    // TikTok profil bilgilerini web API'den al (TIMEOUT ile)
+    async function fetchProfileFromWebAPI(username) {
+      try {
+        console.log('🔍 TikTok profili aranıyor:', username);
+
+        // Timeout fonksiyonu
+        const timeout = (promise, ms) => {
+          return Promise.race([
+            promise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
+          ]);
+        };
+
+        // Method 1: TikTok Direct API (2 saniye timeout)
+        try {
+          console.log('🔄 TikTok API (2s timeout)...');
+          const promise = fetch(`https://www.tiktok.com/api/user/detail/?username=${encodeURIComponent(username)}`);
+          const response = await timeout(promise, 2000);
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.userDetail?.user) {
+              const user = data.userDetail.user;
+              const stats = data.userDetail.stats;
+              console.log('✅ TikTok API başarılı!');
+              return {
+                username: user.uniqueId || username,
+                avatar: user.avatarLarger || user.avatarMedium || '',
+                followerCount: stats?.followerCount || 0
+              };
+            }
+          }
+        } catch (e) {
+          console.log('❌ TikTok API başarısız');
+        }
+
+        // Method 2: oEmbed API (2 saniye timeout)
+        try {
+          console.log('🔄 oEmbed API (2s timeout)...');
+          const promise = fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${encodeURIComponent(username)}`);
+          const response = await timeout(promise, 2000);
+          
+          if (response.ok) {
+            const data = await response.json();
+            console.log('✅ oEmbed API başarılı!');
+            return {
+              username: data?.author_name || username,
+              avatar: data?.thumbnail_url || '',
+              followerCount: 0
+            };
+          }
+        } catch (e) {
+          console.log('❌ oEmbed başarısız');
+        }
+
+        console.log('⚠️ Hiçbir API çalışmadı');
+        return null;
+
+      } catch (error) {
+        console.error('❌ Profil alma hatası:', error);
+        return null;
+      }
+    }
+
+    // Kullanıcı adından baş harfleri al
+    function getInitials(username) {
+      const name = username.replace('@', '').trim();
+      const words = name.split(/[._-]/);
+      if (words.length >= 2) {
+        return (words[0][0] + words[1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    // Rastgele renk oluştur (username bazlı, her zaman aynı)
+    function getColorForUsername(username) {
+      const colors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+        '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#85E1A0'
+      ];
+      let hash = 0;
+      for (let i = 0; i < username.length; i++) {
+        hash = ((hash << 5) - hash) + username.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    function ensureProfileAvatarImg(avatarDiv) {
+      if (!avatarDiv) return null;
+
+      let img = document.getElementById('profileAvatarImg');
+      if (!img) {
+        img = document.createElement('img');
+        img.id = 'profileAvatarImg';
+        img.alt = 'TikTok Profile';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '50%';
+      }
+
+      if (img.parentElement !== avatarDiv) {
+        avatarDiv.textContent = '';
+        avatarDiv.appendChild(img);
+      }
+
+      return img;
+    }
+
+    // Profil ekranını güncelle
+    function updateProfileDisplay(profile) {
+      profile = normalizeProfile(profile);
+      if (!profile) {
+        console.log('❌ Profil null');
+        resetProfileDisplay();
+        return;
+      }
+
+      const profileBox = document.getElementById('profileBox');
+      const profileName = document.getElementById('profileName');
+      const profileAvatarDiv = document.getElementById('profileAvatar');
+      const profileAvatar = ensureProfileAvatarImg(profileAvatarDiv);
+      const followerCount = document.getElementById('followerCount');
+      const profileHandle = document.getElementById('profileHandle');
+      const followingCount = document.getElementById('followingCount');
+
+      console.log('📱 Profil güncelleniyor:', profile);
+
+      // Kullanıcı adı
+      if (profileName) {
+        const displayName = profile.nickname || profile.username || profile.uniqueId || 'Unknown';
+        profileName.textContent = displayName;
+        console.log('✅ Profil adı:', displayName);
+      }
+      if (profileHandle) {
+        const handle = profile.username || profile.uniqueId || 'username';
+        profileHandle.textContent = '@' + handle.replace(/^@/, '');
+      }
+
+      // Avatar
+      if (profileAvatar && profileAvatarDiv) {
+        if (profile.avatar && profile.avatar.trim().length > 0) {
+          // URL'si varsa resmi göster
+          profileAvatarDiv.textContent = '';
+          profileAvatarDiv.appendChild(profileAvatar);
+          profileAvatarDiv.style.backgroundColor = '';
+          profileAvatarDiv.style.color = '';
+          profileAvatarDiv.style.fontSize = '';
+          profileAvatarDiv.style.fontWeight = '';
+          profileAvatar.onerror = () => {
+            console.warn('❌ Avatar yüklenemedi, CSS avatar kullanılıyor');
+            showCSSAvatar(profileAvatarDiv, profile.username, profile.initials);
+          };
+          profileAvatar.referrerPolicy = 'no-referrer';
+          profileAvatar.src = profile.avatar;
+          profileAvatar.style.display = 'block';
+          console.log('✅ Avatar URL:', profile.avatar);
+        } else {
+          // CSS avatar göster
+          profileAvatar.style.display = 'none';
+          showCSSAvatar(profileAvatarDiv, profile.username, profile.initials);
+        }
+      }
+
+      // Takipçi sayısı
+      if (followerCount) {
+        const followCount = profile.followerCount || 0;
+        if (followCount > 0) {
+          const formatted = formatNumber(followCount);
+          followerCount.textContent = formatted;
+          console.log('✅ Takipçi sayısı:', formatted);
+        } else {
+          followerCount.textContent = '--';
+          console.log('⚠️ Takipçi sayısı yok');
+        }
+      }
+      if (followingCount) {
+        followingCount.textContent = profile.followingCount ? formatNumber(profile.followingCount) : '--';
+      }
+
+      // Profil kutusunu göster
+      if (profileBox) {
+        profileBox.style.display = 'flex';
+        console.log('✅ Profil kutusu gösterildi');
+      }
+
+      console.log('✅ Profil tamamen yüklendi!');
+    }
+
+    // CSS avatar oluştur ve göster
+    function showCSSAvatar(avatarDiv, username, initials) {
+      if (!avatarDiv) return;
+      
+      const color = getColorForUsername(username || '');
+      const displayInitials = initials || getInitials(username || '');
+      
+      const img = ensureProfileAvatarImg(avatarDiv);
+      if (img) {
+        img.style.display = 'none';
+      }
+      Array.from(avatarDiv.childNodes).forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.remove();
+        }
+      });
+      avatarDiv.appendChild(document.createTextNode(displayInitials));
+      avatarDiv.style.display = 'flex';
+      avatarDiv.style.alignItems = 'center';
+      avatarDiv.style.justifyContent = 'center';
+      avatarDiv.style.width = '40px';
+      avatarDiv.style.height = '40px';
+      avatarDiv.style.borderRadius = '50%';
+      avatarDiv.style.backgroundColor = color;
+      avatarDiv.style.color = 'white';
+      avatarDiv.style.fontWeight = 'bold';
+      avatarDiv.style.fontSize = '16px';
+      avatarDiv.style.flexShrink = '0';
+      
+      console.log('✅ CSS Avatar gösteriliyor:', displayInitials, 'renk:', color);
+    }
+
+    // Profil ekranını sıfırla
+    function resetProfileDisplay() {
+      const profileBox = document.getElementById('profileBox');
+      const profileName = document.getElementById('profileName');
+      const profileAvatarDiv = document.getElementById('profileAvatar');
+      const profileAvatar = ensureProfileAvatarImg(profileAvatarDiv);
+      const followerCount = document.getElementById('followerCount');
+      const profileHandle = document.getElementById('profileHandle');
+      const followingCount = document.getElementById('followingCount');
+
+      if (profileName) {
+        profileName.textContent = 'Profile';
+      }
+      if (profileHandle) {
+        profileHandle.textContent = '@username';
+      }
+      if (followerCount) {
+        followerCount.textContent = '--';
+      }
+      if (followingCount) {
+        followingCount.textContent = '--';
+      }
+      if (profileAvatar) {
+        profileAvatar.src = 'tiktok.jpg';
+        profileAvatar.style.display = 'none';
+      }
+      if (profileAvatarDiv) {
+        profileAvatarDiv.textContent = '';
+        profileAvatarDiv.style.backgroundColor = '';
+      }
+      
+      // Profil kutusunu gizle
+      if (profileBox) {
+        profileBox.style.display = 'none';
+        console.log('🔲 Profil kutusu gizlendi');
+      }
+    }
+
+    // Sayıları biçimlendir (1.2M, 5.3K vs)
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num.toString();
+    }
+
+    function connectToProxy(uniqueId) {
+      if (socket) socket.close();
+      
+      socket = new WebSocket('ws://localhost:21213');
+      
+      socket.onopen = () => {
+        console.log('Proxy sunucusuna bağlandı');
+        socket.send(JSON.stringify({ type: 'connect', id: uniqueId }));
+      };
+      
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.event === 'giftList') {
+          console.log('Hediye listesi alındı:', data.data);
+          updatePacksUI(data.data);
+        }
+        if (data.event === 'profile' && data.data) {
+          console.log('Profil bilgisi alındı:', data.data);
+          updateProfileDisplay(data.data);
+        }
+      };
+      
+      socket.onclose = () => {
+        console.log('Proxy bağlantısı kesildi, yeniden bağlanıyor...');
+        setTimeout(() => connectToProxy(uniqueId), 3000);
+      };
+    }
+
+    function updatePacksUI(gifts) {
+      const container = document.getElementById('coinPacks');
+      if (!container || !gifts || gifts.length === 0) return;
+
+      // Sadece hediye listesi geldiğinde UI'ı güncelle
+      const packsHtml = gifts.slice(0, 7).map(gift => {
+        const diamondCount = gift.diamond_count || 1;
+        // Basit bir fiyat hesaplama (örneğin 1 elmas = 0.01 USD)
+        const price = (diamondCount * 0.0105).toFixed(2);
+        const imageUrl = gift.image_url || `https://p16-webcast.tiktokcdn.com/img/bm-test/gift/${gift.id}.png~tplv-obj.image`;
+        
+        return `
+          <div class="coin-pack" data-amount="${diamondCount}" data-price="${price}">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img src="${imageUrl}" alt="${gift.name}" style="width:32px;height:32px;object-fit:contain;">
+                <div class="coin-amount" style="font-weight:700;font-size:1.3em;">${diamondCount.toLocaleString()}</div>
+              </div>
+              <span class="coin-price" style="color:#888; text-align: center; padding-left: 1em;">$${price}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Custom pack'i sona ekle
+      const customPackHtml = `
+        <div class="custom-pack" id="customPack">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+            <div class="coin-amount" style="font-weight:700;font-size:1.3em; display:flex; align-items:center; gap:4px;">
+              <img src="coin.png" alt="Coin" style="width:32px;height:32px;">
+              Custom
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = packsHtml + customPackHtml;
+      
+      // Event listener'ları tekrar bağla
+      rebindEvents();
+    }
+
+    function rebindEvents() {
+      const coinPacks = document.querySelectorAll('.coin-pack');
+      const totalPriceSpan = document.getElementById('totalPrice');
+      const bottomRechargeBtn = document.getElementById('bottomRechargeBtn');
+      const customPackDiv = document.getElementById('customPack');
+      const orderSummaryModal = document.getElementById('orderSummaryModal');
+      const customRechargeModal = document.getElementById('customRechargeModal');
+      const customModalAmountSpan = document.getElementById('customModalAmount');
+      const modalTotalPriceSpan = document.getElementById('modalTotalPrice');
+
+      coinPacks.forEach(pack => {
+        pack.addEventListener('click', () => {
+          coinPacks.forEach(p => p.classList.remove('selected'));
+          pack.classList.add('selected');
+
+          selectedAmount = parseInt(pack.dataset.amount);
+          selectedPrice = parseFloat(pack.dataset.price);
+          
+          totalPriceSpan.textContent = `$${selectedPrice.toFixed(2)}`;
+          bottomRechargeBtn.textContent = `Recharge $${selectedPrice.toFixed(2)}`;
+        });
+      });
+
+      if (customPackDiv) {
+        customPackDiv.addEventListener('click', () => {
+          customRechargeModal.style.display = 'flex';
+          orderSummaryModal.style.display = 'none';
+          currentCustomAmount = '';
+          customModalAmountSpan.textContent = '0';
+          modalTotalPriceSpan.textContent = '$0';
+        });
+      }
+
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // MasterApp'ten gelen bağlantı mesajını dinle
+      window.addEventListener('message', function(event) {
+          if (event.data.type === 'connect' && event.data.id) {
+              const usernameInput = document.getElementById('username');
+              if (usernameInput) {
+                  usernameInput.value = event.data.id;
+                  console.log("TikTok ID ttcoinpp'e başarıyla aktarıldı:", event.data.id);
+
+                  const connectedUsername = normalizeUsername(event.data.id);
+                  updateProfileDisplay({
+                  username: connectedUsername,
+                    nickname: event.data.nickname || event.data.displayName || connectedUsername,
+                    avatar: event.data.avatar || event.data.avatarUrl || event.data.avatarLarger || '',
+                    followerCount: event.data.stats?.followerCount || event.data.followerCount || event.data.followers || 0,
+                    followingCount: event.data.stats?.followingCount || event.data.followingCount || event.data.following || 0,
+                  initials: getInitials(connectedUsername)
+                  });
+                  hostFollowerCount = Number(event.data.stats?.followerCount || event.data.followerCount || event.data.followers || 0);
+                  hostFollowingCount = Number(event.data.stats?.followingCount || event.data.followingCount || event.data.following || 0);
+                  fetchTikTokProfile(connectedUsername);
+
+                  // Proxy'ye bağlan
+                  connectToProxy(connectedUsername);
+              }
+          }
+      });
+
+      if (queuedConnectMessage) {
+        const pendingMessage = queuedConnectMessage;
+        queuedConnectMessage = null;
+        setTimeout(() => window.postMessage(pendingMessage, '*'), 0);
+      }
+
+      const coinPacks = document.querySelectorAll('.coin-pack');
+      const totalPriceSpan = document.getElementById('totalPrice');
+      const bottomRechargeBtn = document.getElementById('bottomRechargeBtn');
+      const orderSummaryModal = document.getElementById('orderSummaryModal');
+      const closeOrderSummaryModal = document.getElementById('closeOrderSummaryModal');
+      const summaryAccount = document.getElementById('summaryAccount');
+      const summaryCoins = document.getElementById('summaryCoins');
+      const summaryCoinPrice = document.getElementById('summaryCoinPrice');
+      const summaryTotal = document.getElementById('summaryTotal');
+      const usernameInput = document.getElementById('username');
+      const customPackDiv = document.getElementById('customPack');
+      const customRechargeModal = document.getElementById('customRechargeModal');
+      const modalBackBtn = document.getElementById('modalBack');
+      const customModalAmountSpan = document.getElementById('customModalAmount');
+      const keypad = document.querySelector('.keypad');
+      const modalTotalPriceSpan = document.getElementById('modalTotalPrice');
+      const modalPayBtn = document.getElementById('modalPayBtn');
+      const successPopup = document.getElementById('successPopup');
+      const successMessage = document.getElementById('successMessage');
+      const successGoBackBtn = document.getElementById('successGoBackBtn');
+      const payNowButton = document.getElementById('payNowButton');
+      const loadingScreen = document.getElementById('loadingScreen');
+      const countdownElement = document.getElementById('countdown');
+      let countdownInterval = null;
+
+      // Bakiyeyi takip eden alan
+      const balanceSpan = document.getElementById('balanceCoins');
+      let accountBalance = 0;
+      if (balanceSpan) {
+        accountBalance = parseInt((balanceSpan.textContent || '').replace(/[^0-9]/g, ''), 10) || 0;
+        balanceSpan.textContent = accountBalance.toLocaleString();
+      }
+
+      // Kullanıcı adı input alanını dinle
+      if (usernameInput) {
+        usernameInput.addEventListener('input', (e) => {
+          const username = normalizeUsername(e.target.value);
+          console.log('⌨️ Input değişti:', username);
+
+          clearTimeout(profileDebounceTimer);
+          
+          if (username.length > 0) {
+            const profileBox = document.getElementById('profileBox');
+            if (profileBox) profileBox.style.display = 'none';
+
+            profileDebounceTimer = setTimeout(() => {
+              console.log('✅ Profil gösteriliyor:', username);
+              updateProfileDisplay({
+                username: username,
+                avatar: '',
+                followerCount: 0,
+                initials: getInitials(username)
+              });
+              fetchTikTokProfile(username);
+            }, 350);
+          } else {
+            console.log('🔲 Profil gizleniyor');
+            profileRequestId++;
+            resetProfileDisplay();
+          }
+        });
+
+        // Yapıştırma olayını da dinle
+        usernameInput.addEventListener('paste', (e) => {
+          setTimeout(() => {
+            const username = normalizeUsername(usernameInput.value);
+            if (username.length > 0) {
+              const profileBox = document.getElementById('profileBox');
+              if (profileBox) profileBox.style.display = 'none';
+              clearTimeout(profileDebounceTimer);
+              profileDebounceTimer = setTimeout(() => {
+                updateProfileDisplay({
+                  username: username,
+                  avatar: '',
+                  followerCount: 0,
+                  initials: getInitials(username)
+                });
+                fetchTikTokProfile(username);
+              }, 350);
+            }
+          }, 10);
+        });
+      }
+
+      // Güvenli hesaplayıcı (daima pozitif bir değer döner)
+      function getPricePerCoin() {
+        if (pricePerCoin && isFinite(pricePerCoin) && pricePerCoin > 0) return pricePerCoin;
+        if (selectedAmount > 0 && selectedPrice > 0) return selectedPrice / selectedAmount;
+        const firstPack = document.querySelector('.coin-pack');
+        if (firstPack) {
+          const a = parseInt(firstPack.dataset.amount);
+          const p = parseFloat(firstPack.dataset.price);
+          if (a > 0 && p > 0) return p / a;
+        }
+        return 0.01; // güvenli varsayılan
+      }
+
+      // İlk hesaplama (güvenli)
+      (function initPricePerCoin() {
+        const firstPack = document.querySelector('.coin-pack');
+        if (firstPack) {
+          const a = parseInt(firstPack.dataset.amount);
+          const p = parseFloat(firstPack.dataset.price);
+          if (a > 0 && p > 0) {
+            pricePerCoin = p / a;
+          }
+        } else if (selectedAmount > 0 && selectedPrice > 0) {
+          pricePerCoin = selectedPrice / selectedAmount;
+        }
+      })();
+
+      // İlk toplam ve buton metni
+      totalPriceSpan.textContent = `$${selectedPrice.toFixed(2)}`;
+      if (bottomRechargeBtn) bottomRechargeBtn.textContent = 'Exchange';
+
+      // Paket seçimleri
+      coinPacks.forEach(pack => {
+        pack.addEventListener('click', () => {
+          coinPacks.forEach(p => p.classList.remove('selected'));
+          pack.classList.add('selected');
+
+          selectedAmount = parseInt(pack.dataset.amount);
+          selectedPrice = parseFloat(pack.dataset.price);
+          pricePerCoin = selectedAmount > 0 ? (selectedPrice / selectedAmount) : getPricePerCoin();
+
+          totalPriceSpan.textContent = `$${selectedPrice.toFixed(2)}`;
+          bottomRechargeBtn.textContent = 'Exchange';
+        });
+      });
+
+      // Alt çubuktan sipariş özeti
+      bottomRechargeBtn.addEventListener('click', () => {
+        summaryAccount.textContent = usernameInput.value || '@jakeobsidian';
+        summaryCoins.textContent = `${selectedAmount.toLocaleString()} Coins`;
+        summaryCoinPrice.textContent = `$${selectedPrice.toFixed(2)}`;
+        summaryTotal.textContent = `$${selectedPrice.toFixed(2)}`;
+        orderSummaryModal.style.display = 'flex';
+      });
+
+      closeOrderSummaryModal.addEventListener('click', () => {
+        orderSummaryModal.style.display = 'none';
+      });
+
+      // Geri sayım fonksiyonu
+      function startCountdown(duration) {
+        let timer = duration;
+        clearInterval(countdownInterval);
+        if (countdownElement) countdownElement.textContent = '05:00';
+
+        countdownInterval = setInterval(() => {
+          const m = Math.floor(timer / 60);
+          const s = timer % 60;
+          const minutes = String(m).padStart(2, '0');
+          const seconds = String(s).padStart(2, '0');
+
+          if (countdownElement) countdownElement.textContent = `${minutes}:${seconds}`;
+
+          if (timer <= 299) {
+        clearInterval(countdownInterval);
+        loadingScreen.style.display = 'none';
+            customRechargeModal.style.display = 'none';
+            orderSummaryModal.style.display = 'none';
+            if (successMessage) {
+              const coinsText = Number(selectedAmount || 0).toLocaleString();
+              successMessage.textContent = `You exchanged for 🟡 ${coinsText} Coins`;
+              const recipient = (usernameInput.value || 'username').replace(/^@/, '');
+              document.getElementById('successRecipient').textContent = `@${recipient}`;
+              successMessage.innerHTML = `You exchanged for <img class="success-coin" src="coin.png" alt=""> ${coinsText} Coins`;
+              document.getElementById('successCoins').textContent = `${coinsText} Coins`;
+              document.getElementById('successAmount').textContent = `$${Number(selectedPrice || 0).toFixed(2)}`;
+              document.getElementById('successDate').textContent = new Date().toLocaleString('en-GB', {
+                day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+              });
+            }
+            showRewardsNotification();
+
+            // İşlem tamamlanınca bakiye düş
+            if (balanceSpan) {
+              accountBalance = Math.max(0, (accountBalance || 0) - (selectedAmount || 0));
+              balanceSpan.textContent = accountBalance.toLocaleString();
+            }
+
+            successPopup.style.display = 'flex';
+            return;
+          }
+
+          timer--;
+        }, 1000);
+      }
+
+      // Order summary modalındaki Pay now
+      payNowButton.addEventListener('click', () => {
+        orderSummaryModal.style.display = 'none';
+        loadingScreen.style.display = 'flex';
+        startCountdown(5 * 60);
+      });
+
+      // Custom modal açılışı
+      customPackDiv.addEventListener('click', () => {
+        customRechargeModal.style.display = 'flex';
+        orderSummaryModal.style.display = 'none';
+        currentCustomAmount = '';
+        customModalAmountSpan.textContent = '0';
+        modalTotalPriceSpan.textContent = '$0';
+      });
+
+      const customEntry = document.getElementById('customEntry');
+      if (customEntry) {
+        customEntry.addEventListener('click', () => customPackDiv.click());
+      }
+
+      modalBackBtn.addEventListener('click', () => {
+        customRechargeModal.style.display = 'none';
+      });
+
+      // Custom keypad
+      keypad.addEventListener('click', (event) => {
+        const clickedKey = event.target;
+        if (clickedKey.classList.contains('key')) {
+          const keyValue = clickedKey.textContent.trim();
+
+          if (clickedKey.classList.contains('delete-key')) {
+            currentCustomAmount = currentCustomAmount.slice(0, -1);
+            console.log('⌫ Delete tuşu basıldı');
+          } else if (keyValue === '000') {
+            currentCustomAmount += '000';
+            console.log('Tuş basıldı: 000');
+          } else {
+            currentCustomAmount += keyValue;
+            console.log('Tuş basıldı:', keyValue);
+          }
+
+          if (currentCustomAmount.length > 7) {
+            currentCustomAmount = currentCustomAmount.slice(0, 7);
+          }
+
+          if (currentCustomAmount === '') {
+            customModalAmountSpan.textContent = '0';
+            modalTotalPriceSpan.textContent = '$0';
+          } else {
+            const amount = parseInt(currentCustomAmount);
+            customModalAmountSpan.textContent = amount.toLocaleString();
+            const ppc = getPricePerCoin();
+            const price = (amount * ppc).toFixed(2);
+            modalTotalPriceSpan.textContent = `$${price}`;
+          }
+        }
+      });
+
+      // Custom modal - Recharge butonu
+      modalPayBtn.addEventListener('click', () => {
+        const finalAmount = parseInt(currentCustomAmount || '0') || 0;
+        const ppc = getPricePerCoin();
+        const finalPrice = (finalAmount * ppc).toFixed(2);
+
+        // Custom ödeme akışı için global seçimi güncelle
+        selectedAmount = finalAmount;
+        selectedPrice = parseFloat(finalPrice);
+        pricePerCoin = ppc;
+
+        summaryAccount.textContent = usernameInput.value || '@jakeobsidian';
+        summaryCoins.textContent = `${finalAmount.toLocaleString()} Coins`;
+        summaryCoinPrice.textContent = `$${finalPrice}`;
+        summaryTotal.textContent = `$${finalPrice}`;
+
+        customRechargeModal.style.display = 'none';
+        orderSummaryModal.style.display = 'flex';
+      });
+
+      successGoBackBtn.addEventListener('click', () => {
+        successPopup.style.display = 'none';
+        customRechargeModal.style.display = 'none';
+        orderSummaryModal.style.display = 'none';
+        loadingScreen.style.display = 'none';
+        animateBalanceDecrease(selectedPrice);
+        // Kullanıcı adı kutosunu temizle ve profili gizle
+        if (usernameInput) {
+          usernameInput.value = '';
+          resetProfileDisplay();
+        }
+      });
+
+      const balanceExchangeBtn = document.getElementById('balanceExchangeBtn');
+      if (balanceExchangeBtn) {
+        balanceExchangeBtn.addEventListener('click', () => {
+          animateBalanceDecrease(selectedPrice);
+          document.getElementById('coinPacks')?.closest('.section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      // Modal dışına tıklayınca kapat
+      window.addEventListener('click', (event) => {
+        if (event.target === orderSummaryModal) {
+          orderSummaryModal.style.display = 'none';
+        }
+        if (event.target === customRechargeModal) {
+          customRechargeModal.style.display = 'none';
+        }
+        if (event.target === successPopup) {
+          successPopup.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+ 

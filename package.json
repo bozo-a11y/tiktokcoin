@@ -1,0 +1,21 @@
+{
+  "name": "tiktok-profile-backend",
+  "version": "1.0.0",
+  "description": "TikTok profil bilgisi API",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js",
+    "dev": "nodemon backend.js"
+  },
+  "keywords": ["tiktok", "profile", "api"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
